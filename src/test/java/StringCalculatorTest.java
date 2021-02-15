@@ -1,7 +1,9 @@
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class StringCalculatorTest {
 
@@ -59,6 +61,25 @@ public class StringCalculatorTest {
   public void usesDelimiterSepcified() {
     assertThat(StringCalculator.Add("//;\n1;40"), is(41));
     assertThat(StringCalculator.Add("//:\n2:3:4:1"), is(10));
+  }
+
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
+
+  @Test
+  public void throwsOnNegativeNumber() {
+    expectedException.expect(IllegalArgumentException.class);
+    expectedException.expectMessage("negative number: -3");
+
+    StringCalculator.Add("-3");
+  }
+
+  @Test
+  public void throwsOnNegativeNumbersWithAllNumbersInExceptionMessage() {
+    expectedException.expect(IllegalArgumentException.class);
+    expectedException.expectMessage("negative number: -3,-5,-13");
+
+    StringCalculator.Add("1,-3,5,-5,-13");
   }
 
 }

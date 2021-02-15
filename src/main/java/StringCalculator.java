@@ -1,6 +1,6 @@
 import com.google.common.base.Strings;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class StringCalculator {
@@ -14,21 +14,37 @@ public class StringCalculator {
   }
 
 
-  public static void main(String[] args) {
-
+  private int sum() {
+    noNegativeNumbers();
+    return getNumbers().sum();
   }
 
-  public static int Add(String numbers) {
+  private void noNegativeNumbers() {
+    String negativeNumberSequence = getNumbers().filter(n -> n < 0)
+        .mapToObj(Integer::toString)
+        .collect(Collectors.joining(","));
+    if (!negativeNumberSequence.isEmpty()) {
+      throw new IllegalArgumentException("negative number: " + negativeNumberSequence);
+    }
+  }
+
+  private IntStream getNumbers() {
     if (Strings.isNullOrEmpty(numbers)) {
-      return 0;
+      return IntStream.empty();
     } else {
-      StringCalculator calculator = parseInput(numbers);
-      return Stream.of(calculator.numbers.split(calculator.delimiter))
+      return Stream.of(numbers.split(delimiter))
           .filter(i -> !Strings.isNullOrEmpty(i))
           .filter(i -> !"null".equalsIgnoreCase(i))
           .mapToInt(Integer::parseInt)
-          .sum();
+          .map(n -> n % 1000);
     }
+  }
+
+  public static int Add(String input) {
+    if (input == null) {
+      return 0;
+    }
+    return parseInput(input).sum();
   }
 
   private static StringCalculator parseInput(String input) {
