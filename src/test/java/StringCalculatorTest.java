@@ -61,6 +61,7 @@ public class StringCalculatorTest {
   public void usesDelimiterSepcified() {
     assertThat(StringCalculator.Add("//;\n1;40"), is(41));
     assertThat(StringCalculator.Add("//:\n2:3:4:1"), is(10));
+    assertThat(StringCalculator.Add("//.\n2.3.4.1"), is(10));
   }
 
   @Rule
@@ -69,17 +70,35 @@ public class StringCalculatorTest {
   @Test
   public void throwsOnNegativeNumber() {
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("negative number: -3");
+    expectedException.expectMessage("negative number: -7");
 
-    StringCalculator.Add("-3");
+    StringCalculator.Add("-7");
   }
 
   @Test
   public void throwsOnNegativeNumbersWithAllNumbersInExceptionMessage() {
     expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage("negative number: -3,-5,-13");
+    expectedException.expectMessage("negative number: -7,-15,-53");
 
-    StringCalculator.Add("1,-3,5,-5,-13");
+    StringCalculator.Add("1,-7,5,-15,-53");
+  }
+
+
+  @Test
+  public void mapsNumbersAbove1000ToLastThreeDigits() {
+    assertThat(StringCalculator.Add("1002"), is(2));
+    assertThat(StringCalculator.Add("1040,10002"), is(42));
+  }
+
+  @Test
+  public void acceptsDelimiterOfAnyLength() {
+    assertThat(StringCalculator.Add("//[***]\n1***2***3"), is(6));
+  }
+
+  @Test
+  public void acceptsMultipleDelimiters() {
+    assertThat(StringCalculator.Add("//[-][;]\n11-2;2"), is(15));
+    assertThat(StringCalculator.Add("//[--][...]\n21--32...40"), is(93));
   }
 
 }

@@ -1,4 +1,5 @@
 import com.google.common.base.Strings;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -58,6 +59,12 @@ public class StringCalculator {
   }
 
   private static String parseDelimiter(String header) {
-    return header.substring(2);
+    String delimiter = header.substring(2);
+    if (delimiter.startsWith("[")) {
+      delimiter = delimiter.substring(1, delimiter.length() - 1);
+    }
+    return Stream.of(delimiter.split("]\\["))
+        .map(Pattern::quote)
+        .collect(Collectors.joining("|"));
   }
 }
